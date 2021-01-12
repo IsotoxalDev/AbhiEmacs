@@ -128,19 +128,23 @@
   (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
 
   ;; Use visual line motions even outside of visual-line-mode buffers
-  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+  (evil-global-set-key 'motion "n" 'evil-next-visual-line)
+  (evil-global-set-key 'motion "e" 'evil-previous-visual-line)
 
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal)
   :custom
-  (setq evil-undo-system 'undo-tree))
+  (evil-undo-system 'undo-tree))
 
 ;; Initializing evil collection
 (use-package evil-collection
   :after evil
   :config
   (evil-collection-init))
+
+(use-package evil-colemak-basics
+  :config
+  (global-evil-colemak-basics-mode))
 
 ;;Initializing hydra
 (use-package hydra)
@@ -150,8 +154,31 @@
   ("j" text-scale-increase "in")
   ("k" text-scale-decrease "out")
   ("f" nil "finished" :exit t))
-  
+ 
+;; Initialize Projectile
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  (when (file-directory-p "~/Dev/")
+    (setq projectile-project-search-path '("~/Dev/")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+
+(use-package magit
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+;; Keybindings
 (abhi/leader-keys
-  "t"  '(:ignore t :which-key "toggles")
-  "tt" '(counsel-load-theme :which-key "choose theme")
-  "ts" '(hydra-text-scale/body :which-key "scale text"))
+  "s"  '(:ignore s :which-key "Settings")
+  "st" '(counsel-load-theme :which-key "Choose theme")
+  "ss" '(hydra-text-scale/body :which-key "Scale text")
+  "se" '(eval-buffer :which-key "Evaluate Buffer")
+  "p"  '(projectile-command-map :which-key "Projectile"))
+
