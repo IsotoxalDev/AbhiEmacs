@@ -217,7 +217,70 @@
   :hook (org-mode . abhi/org-mode-setup)
   :config
   (setq org-ellipsis " ▾")
-  (abhi/org-font-setup))
+  (setq org-agenda-start-with-log-mode t)
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
+
+  (setq org-agenda-files
+	'("~/.org/*.org"
+	  "~/Dev/*/org/*/org"))
+
+  (require 'org-habit)
+  (add-to-list 'org-modules 'org-habit)
+  (setq org-habit-graph-column 60)
+
+  (setq org-todo-keywords
+    '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")))
+
+  ;; Save Org buffers after refiling!
+  (advice-add 'org-refile :after 'org-save-all-org-buffers)
+
+  (setq org-tag-alist
+    '((:startgroup)
+       ; Put mutually exclusive tags here
+       (:endgroup)
+       ("Art" . ?a)
+       ("Code" . ?c)
+       ("idea" . ?i)))
+
+  ;; Configure custom agenda views
+  (setq org-agenda-custom-commands
+   '(("d" "Dashboard"
+     ((agenda "" ((org-deadline-warning-days 7)))
+      (todo "NEXT"
+        ((org-agenda-overriding-header "Next Tasks")))
+      (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
+
+    ("n" "Next Tasks"
+     ((todo "NEXT"
+        ((org-agenda-overriding-header "Next Tasks")))))
+
+    ;; Low-effort next actions
+    ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
+     ((org-agenda-overriding-header "Low Effort Tasks")
+      (org-agenda-max-todos 20)
+      (org-agenda-files org-agenda-files)))
+
+    ("w" "Workflow Status"
+     ((todo "TODO"
+             ((org-agenda-files org-agenda-files)))
+      (todo "NEXT"
+             ((org-agenda-files org-agenda-files)))
+      (todo "DONE"
+             ((org-agenda-files org-agenda-files))))))
+
+  (setq org-capture-templates
+      `(("j" "Journal Entries")
+      ("jj" "Journal" entry
+           (file+olp+datetree "~/.org/Journal.org")
+           "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
+           :clock-in :clock-resume
+           :empty-lines 1)
+
+      ("m" "Metrics Capture")
+      ("mw" "Weight" table-line (file+headline "~/Projects/Code/emacs-from-scratch/OrgFiles/Metrics.org" "Weight")
+       "| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)))
+  (abhi/org-font-setup)))
 
 (use-package org-bullets
   :after org
@@ -239,5 +302,10 @@
   "st" '(counsel-load-theme :which-key "Choose theme")
   "ss" '(hydra-text-scale/body :which-key "Scale text")
   "se" '(eval-buffer :which-key "Evaluate Buffer")
+  "o"  '(:ignore o :which-key "Org-Mode")
+  "oa" '(org-agenda :which-key "Org Agenda")
+  "f"  '(:ignore f :which-key "File")
+  "ff" '(dired :which-key "Open File")
+  "fs" '(save-buffer :which-key "Save File")
   "p"  '(projectile-command-map :which-key "Projectile"))
 
