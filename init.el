@@ -267,7 +267,6 @@
       (todo "NEXT"
              ((org-agenda-files org-agenda-files)))
       (todo "DONE"
-             ((org-agenda-files org-agenda-files))))))
 
   (setq org-capture-templates
       `(("j" "Journal Entries")
@@ -281,6 +280,9 @@
       ("mw" "Weight" table-line (file+headline "~/Projects/Code/emacs-from-scratch/OrgFiles/Metrics.org" "Weight")
        "| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)))
   (abhi/org-font-setup)))
+             ((org-agenda-files org-agenda-files)))))))
+
+  (abhi/org-font-setup))
 
 (use-package org-bullets
   :after org
