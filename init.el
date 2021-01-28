@@ -279,8 +279,7 @@
       ("m" "Metrics Capture")
       ("mw" "Weight" table-line (file+headline "~/Projects/Code/emacs-from-scratch/OrgFiles/Metrics.org" "Weight")
        "| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)))
-  (abhi/org-font-setup)))
-             ((org-agenda-files org-agenda-files)))))))
+  ((org-agenda-files org-agenda-files)))))))
 
   (abhi/org-font-setup))
 
@@ -298,6 +297,15 @@
 (use-package visual-fill-column
   :hook (org-mode . abhi/org-mode-visual-fill))
 
+(use-package lsp-mode)
+
+(use-package lsp-ui
+  :custom
+  (lsp-ui-doc-enable t))
+
+(use-package company
+  :hook (prog-mode . company-mode))
+
 ;; Keybindings
 (abhi/leader-keys
   "s"  '(:ignore s :which-key "Settings")
@@ -307,7 +315,7 @@
   "o"  '(:ignore o :which-key "Org-Mode")
   "oa" '(org-agenda :which-key "Org Agenda")
   "f"  '(:ignore f :which-key "File")
-  "ff" '(dired :which-key "Open File")
+  "ff" '(find-file :which-key "Open File")
   "fs" '(save-buffer :which-key "Save File")
   "p"  '(projectile-command-map :which-key "Projectile"))
 
